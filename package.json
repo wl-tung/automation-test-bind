@@ -1,7 +1,7 @@
 {
   "name": "bindup-automation-tests",
   "version": "1.0.0",
-  "description": "BiNDup Platform Automation Tests - Chrome & WebKit",
+  "description": "BiNDup Platform Automation Tests - Chrome & WebKit (GitHub Actions Enabled)",
   "main": "index.js",
   "scripts": {
     "test": "npx playwright test",
