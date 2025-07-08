@@ -39,10 +39,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/WebLife-Japan/automation-test-bind.git"
+    "url": "https://github.com/wl-tung/automation-test-bind.git"
   },
   "bugs": {
-    "url": "https://github.com/WebLife-Japan/automation-test-bind/issues"
+    "url": "https://github.com/wl-tung/automation-test-bind/issues"
   },
-  "homepage": "https://github.com/WebLife-Japan/automation-test-bind#readme"
+  "homepage": "https://github.com/wl-tung/automation-test-bind#readme"
 }
