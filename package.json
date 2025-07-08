@@ -1,0 +1,48 @@
+{
+  "name": "bindup-automation-tests",
+  "version": "1.0.0",
+  "description": "BiNDup Platform Automation Tests - Chrome & WebKit",
+  "main": "index.js",
+  "scripts": {
+    "test": "npx playwright test",
+    "test:headed": "npx playwright test --headed",
+    "test:chromium": "npx playwright test --project=chromium",
+    "test:webkit": "npx playwright test --project=webkit",
+    "test:both": "npx playwright test --project=chromium --project=webkit",
+    "test:debug": "npx playwright test --debug",
+    "test:ui": "npx playwright test --ui",
+    "report": "npx playwright show-report",
+    "install-browsers": "npx playwright install",
+    "install-deps": "npx playwright install-deps",
+    "test:ci": "npx playwright test --project=chromium --project=webkit --workers=2 --max-failures=10 --reporter=html,json,junit"
+  },
+  "keywords": [
+    "playwright",
+    "testing",
+    "automation",
+    "bindup",
+    "chrome",
+    "webkit",
+    "e2e",
+    "site-creation",
+    "image-crud"
+  ],
+  "author": "WebLife Japan",
+  "license": "MIT",
+  "devDependencies": {
+    "@playwright/test": "^1.40.0",
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/WebLife-Japan/automation-test-bind.git"
+  },
+  "bugs": {
+    "url": "https://github.com/WebLife-Japan/automation-test-bind/issues"
+  },
+  "homepage": "https://github.com/WebLife-Japan/automation-test-bind#readme"
+}
