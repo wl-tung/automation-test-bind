@@ -1,0 +1,22 @@
+{
+  "timestamp": "2025-07-08T04:40:49.704Z",
+  "testRuns": [
+    {
+      "timestamp": "2025-07-08T04:40:49.705Z",
+      "totalTests": 2,
+      "passedTests": 1,
+      "failedTests": 1,
+      "skippedTests": 0,
+      "executionTime": 120,
+      "passRate": 50
+    }
+  ],
+  "summary": {
+    "totalRuns": 1,
+    "averagePassRate": 50,
+    "averageExecutionTime": 120,
+    "bestPassRate": 50,
+    "worstPassRate": 50,
+    "trends": []
+  }
+}
