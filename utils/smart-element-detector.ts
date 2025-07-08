@@ -108,6 +108,89 @@ export class SmartElementDetector {
           await template.click();
           return template;
         },
+
+        // Quinary: Enhanced adaptive template selection with state monitoring
+        async () => {
+          // Wait for template container to be fully loaded
+          await page.waitForTimeout(1000);
+
+          // Check if templates are already visible
+          const visibleTemplates = await page.locator('#id-template-group .cs-frame').count();
+          if (visibleTemplates === 0) {
+            // Try to trigger template visibility
+            await page.hover('#id-template-group');
+            await page.waitForTimeout(1500);
+          }
+
+          // Enhanced template detection with multiple selectors
+          const templateSelectors = [
+            '#id-template-group > div > .cs-frame',
+            '#id-template-group .cs-frame',
+            '[class*="template"] .cs-frame',
+            '.cs-template-item',
+            '[data-template-id]',
+          ];
+
+          let selectedTemplate = null;
+
+          for (const selector of templateSelectors) {
+            try {
+              const templates = page.locator(selector);
+              const count = await templates.count();
+
+              if (count > 0) {
+                // Select the first available template
+                const template = templates.first();
+
+                // Ensure template is visible and clickable
+                await template.waitFor({ state: 'visible', timeout: 3000 });
+
+                // Add visual feedback
+                await template.evaluate((el: any) => {
+                  el.style.outline = '3px solid #00ff00';
+                  el.style.backgroundColor = 'rgba(0, 255, 0, 0.1)';
+                });
+
+                await template.click();
+                selectedTemplate = template;
+                break;
+              }
+            } catch (error) {
+              // Continue to next selector
+              continue;
+            }
+          }
+
+          if (!selectedTemplate) {
+            throw new Error('No templates found with any selector');
+          }
+
+          // Verify template selection was successful
+          await page.waitForTimeout(500);
+
+          // Check for template selection indicators
+          const selectionIndicators = [
+            '.cs-template-selected',
+            '[class*="selected"]',
+            '.cs-active',
+            '[class*="active"]',
+          ];
+
+          let selectionConfirmed = false;
+          for (const indicator of selectionIndicators) {
+            if ((await page.locator(indicator).count()) > 0) {
+              selectionConfirmed = true;
+              break;
+            }
+          }
+
+          if (!selectionConfirmed) {
+            // Template selection may still be valid even without visual indicators
+            TestLogger.logStep('Template selection completed (no visual confirmation)', 'warning');
+          }
+
+          return selectedTemplate;
+        },
       ];
 
       // Try each strategy until one succeeds
@@ -248,6 +331,81 @@ export class SmartElementDetector {
           const button = page.locator('#id-template-item-select');
           await button.evaluate((el: any) => el.click());
           await page.waitForTimeout(500);
+          return button;
+        },
+
+        // Quinary: Enhanced adaptive strategy with button state monitoring
+        async () => {
+          const button = page.locator('text="サイトを作成"');
+
+          // Pre-click state validation
+          await page.waitForTimeout(300);
+
+          // Monitor button state before click
+          const initiallyVisible = await button.isVisible().catch(() => false);
+          if (!initiallyVisible) {
+            throw new Error('Button not visible before click');
+          }
+
+          // Execute click with state monitoring
+          await button.evaluate((el: any) => {
+            // Add visual feedback
+            el.style.backgroundColor = '#ff0000';
+            el.style.border = '2px solid #00ff00';
+
+            if (el && typeof el.click === 'function') {
+              el.click();
+            } else {
+              el.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
+            }
+          });
+
+          // Immediate post-click verification
+          await page.waitForTimeout(100);
+
+          // Check for success indicators with enhanced detection
+          let clickSuccessful = false;
+          const maxWaitTime = 8000;
+          const checkInterval = 200;
+          let elapsedTime = 0;
+
+          while (!clickSuccessful && elapsedTime < maxWaitTime) {
+            try {
+              // Check multiple success indicators
+              const hasDialog = (await page.locator('.cs-dialog').count()) > 0;
+              const hasProgress = (await page.locator('[class*="progress"]').count()) > 0;
+              const hasLoading = (await page.locator('[class*="loading"]').count()) > 0;
+              const hasModal = (await page.locator('[class*="modal"]').count()) > 0;
+              const hasOverlay = (await page.locator('.cs-overlay').count()) > 0;
+              const urlChanged = page.url().includes('editor');
+              const buttonHidden = !(await button.isVisible().catch(() => true));
+
+              if (
+                hasDialog ||
+                hasProgress ||
+                hasLoading ||
+                hasModal ||
+                hasOverlay ||
+                urlChanged ||
+                buttonHidden
+              ) {
+                clickSuccessful = true;
+                break;
+              }
+
+              await page.waitForTimeout(checkInterval);
+              elapsedTime += checkInterval;
+            } catch (error) {
+              // Continue checking
+              await page.waitForTimeout(checkInterval);
+              elapsedTime += checkInterval;
+            }
+          }
+
+          if (!clickSuccessful) {
+            throw new Error('Click executed but no success indicators detected');
+          }
+
           return button;
         },
 
